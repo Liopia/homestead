@@ -28,6 +28,20 @@ if [ -n "${10}" ]; then
    done
 fi
 
+if [ -n "${11}" ]
+then rewriteIMG="
+    location ~* \.(png|jpe?g|gif|bmp|svg|webp|ico)$ {
+        expires 24h;
+        log_not_found off;
+        try_files \$uri \$uri/ @production;
+    }
+    location @production {
+        return ${11}/\$uri;
+    }
+"
+else rewriteIMG=""
+fi
+
 if [ "$7" = "true" ]
 then configureXhgui="
 location /xhgui {
@@ -55,6 +69,8 @@ block="server {
     }
 
     $configureXhgui
+
+    $rewriteIMG
 
     location = /favicon.ico { access_log off; log_not_found off; }
     location = /robots.txt  { access_log off; log_not_found off; }
